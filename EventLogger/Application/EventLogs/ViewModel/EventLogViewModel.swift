@@ -59,7 +59,7 @@ class EventLogViewModel: EventLogViewModelProtocol {
                     
                     hasMoreData = result.count >= Constants.numberOfItemsPerPage
                     
-                    if currentPage == 0 {
+                    if currentPage == 1 {
                         self.events = result
                     } else {
                         self.events.append(contentsOf: result)

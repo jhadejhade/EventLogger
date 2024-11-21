@@ -11,13 +11,13 @@ protocol DataLoadable {
     func loadData<T: Codable>(currentPage: Int, numberOfItemsPerPage: Int) async throws -> [T]
 }
 
-class MockDataService: DataLoadable {
+class DataService: DataLoadable {
     struct Constants {
         /// 0 seconds delay
         static let delayInNanoseconds = UInt64(0 * 1_000_000_000)
     }
     
-    static let shared = MockDataService()
+    static let shared = DataService()
     
     private init() {
         
@@ -36,9 +36,13 @@ class MockDataService: DataLoadable {
                 "title": "Button \(currentIndex)"
             ]
             
-            let jsonData = try JSONSerialization.data(withJSONObject: mockData, options: [])
-            let decodedData = try JSONDecoder().decode(T.self, from: jsonData)
-            datasource.append(decodedData)
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: mockData, options: [])
+                let decodedData = try JSONDecoder().decode(T.self, from: jsonData)
+                datasource.append(decodedData)
+            } catch {
+                throw DataServiceError.decodingFailed(error: error)
+            }
         }
         
         return datasource

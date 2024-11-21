@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct EventDTO: CoreDataMappable {
+struct EventDTO: CoreDataMappable, Equatable {
     var id: Int
     let title: String
     let type: ButtonEvent

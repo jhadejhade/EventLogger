@@ -33,7 +33,7 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
     
     // MARK: Private Properties
     
-    private let dataService: MockDataService
+    private let dataService: DataLoadable
     private let trackerService: EventTrackerServiceProtocol
     
     private var currentPage = 0 {
@@ -44,7 +44,7 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
     
     // MARK: Lifecycle
     
-    init(dataService: MockDataService = MockDataService.shared, trackerService: EventTrackerServiceProtocol = EventTrackerService(repository: CoreDataRepository())) {
+    init(dataService: DataLoadable = DataService.shared, trackerService: EventTrackerServiceProtocol = EventTrackerService(repository: CoreDataRepository())) {
         self.dataService = dataService
         self.trackerService = trackerService
     }
