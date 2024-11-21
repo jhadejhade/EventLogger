@@ -10,6 +10,7 @@ import Foundation
 protocol EventLogViewModelProtocol: ObservableObject {
     var events: [EventDTO] { get }
     var hasMoreData: Bool { get }
+    var hasError: Bool { get }
     
     func fetchEvents()
     func bumpPage()
@@ -28,6 +29,7 @@ class EventLogViewModel: EventLogViewModelProtocol {
     
     @Published var events: [EventDTO] = []
     @Published var hasMoreData: Bool = true
+    @Published var hasError: Bool = false
     
     // MARK: Private Properties
     
@@ -64,9 +66,17 @@ class EventLogViewModel: EventLogViewModelProtocol {
                     } else {
                         self.events.append(contentsOf: result)
                     }
+                    
+                    hasError = false
                 }
             } catch {
-                print(error)
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else {
+                        return
+                    }
+                    
+                    hasError = true
+                }
             }
         }
     }

@@ -10,6 +10,8 @@ import Combine
 protocol MainViewControllerViewModelProtocol: ObservableObject {
     var buttonDatasource: [ButtonData] { get }
     var buttonDatasourcePublisher: Published<[ButtonData]>.Publisher { get }
+    var hasError: Bool { get }
+    var hasErrorPublisher: Published<Bool>.Publisher { get }
     
     func fetchButtonDatasource()
     func bumpPage()
@@ -29,6 +31,11 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
     @Published var buttonDatasource: [ButtonData] = []
     var buttonDatasourcePublisher: Published<[ButtonData]>.Publisher {
         $buttonDatasource
+    }
+    
+    @Published var hasError: Bool = false
+    var hasErrorPublisher: Published<Bool>.Publisher {
+        $hasError
     }
     
     // MARK: Private Properties
@@ -62,8 +69,10 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
                     buttonDatasource.append(contentsOf: result)
                 }
                 
+                hasError = false
             } catch {
-                print(error)
+                buttonDatasource = []
+                hasError = true
             }
         }
     }

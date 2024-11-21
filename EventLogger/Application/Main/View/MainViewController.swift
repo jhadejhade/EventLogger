@@ -19,6 +19,7 @@ class MainViewController: UIViewController {
     
     private let viewModel: any MainViewControllerViewModelProtocol = MainViewControllerViewModel()
     private var cancellables = Set<AnyCancellable>()
+    private var errorView: ErrorView?
     
     // MARK: Lifecycle
     
@@ -55,6 +56,51 @@ class MainViewController: UIViewController {
             
         }
         .store(in: &cancellables)
+        
+        viewModel.hasErrorPublisher.sink { [weak self] hasError in
+            guard let self else {
+                return
+            }
+            
+            if hasError {
+                showErrorState()
+            } else {
+                hideErrorState()
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func showErrorState() {
+        if errorView == nil {
+            errorView = ErrorView(message: "Something went wrong", buttonText: "Try Again")
+        }
+        
+        errorView?.tryAgainAction = { [weak self] in
+            guard let self else {
+                return
+            }
+            
+            viewModel.fetchButtonDatasource()
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {
+                return
+            }
+            
+            tableView.backgroundView = errorView
+        }
+    }
+    
+    private func hideErrorState() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {
+                return
+            }
+            
+            tableView.backgroundView = nil
+        }
     }
     
     // MARK: IBActions

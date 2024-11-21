@@ -12,23 +12,33 @@ struct EventLogView<T: EventLogViewModelProtocol>: View {
     @StateObject var viewModel: T
     
     var body: some View {
-        List {
-            ForEach(viewModel.events, id: \.createdAt) { item in
-                Text(viewModel.getFormattedString(for: item))
-            }
-            
-            if viewModel.hasMoreData {
-                HStack {
-                    Spacer()
-                    
-                    ProgressView()
-                    
-                    Spacer()
+        if viewModel.hasError {
+            VStack(spacing: 16) {
+                Text("Something went wrong")
+                
+                Button("Try again") {
+                    viewModel.fetchEvents()
                 }
-                .onAppear(perform: viewModel.bumpPage)
             }
+        } else {
+            List {
+                ForEach(viewModel.events, id: \.createdAt) { item in
+                    Text(viewModel.getFormattedString(for: item))
+                }
+                
+                if viewModel.hasMoreData {
+                    HStack {
+                        Spacer()
+                        
+                        ProgressView()
+                        
+                        Spacer()
+                    }
+                    .onAppear(perform: viewModel.bumpPage)
+                }
+            }
+            .onAppear(perform: viewModel.fetchEvents)
         }
-        .onAppear(perform: viewModel.fetchEvents)
     }
 }
 
