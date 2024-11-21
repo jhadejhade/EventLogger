@@ -71,6 +71,7 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
         
         let buttonData = viewModel.buttonDatasource[indexPath.row]
         cell.setup(with: buttonData)
+        cell.delegate = self
         
         return cell
     }
@@ -92,6 +93,6 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
 
 extension MainViewController: ButtonTableViewCellDelegate {
     func trackEvent(_ cell: ButtonTableViewCell, with buttonData: ButtonData, for event: ButtonEvent) {
-        
+        viewModel.trackEvent(with: buttonData, for: event)
     }
 }

@@ -13,6 +13,7 @@ protocol MainViewControllerViewModelProtocol: ObservableObject {
     
     func fetchButtonDatasource()
     func bumpPage()
+    func trackEvent(with buttonData: ButtonData, for event: ButtonEvent)
 }
 
 class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
@@ -69,6 +70,20 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
     
     func bumpPage() {
         currentPage += 1
+    }
+    
+    func trackEvent(with buttonData: ButtonData, for event: ButtonEvent) {
+        let event = EventDTO(id: buttonData.id, title: buttonData.title, type: event)
+        
+        Task {
+            do {
+                try await trackerService.createEvent(event)
+                let test = try await trackerService.fetchEvents(page: 1, limit: 500)
+                print(test)
+            } catch {
+                print(error)
+            }
+        }
     }
 }
 

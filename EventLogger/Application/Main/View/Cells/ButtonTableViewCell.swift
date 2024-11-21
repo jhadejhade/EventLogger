@@ -19,9 +19,14 @@ class ButtonTableViewCell: UITableViewCell {
     
     var buttonData: ButtonData?
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        if let gestureRecognizers = eventButton.gestureRecognizers {
+            for recognizer in gestureRecognizers {
+                eventButton.removeGestureRecognizer(recognizer)
+            }
+        }
     }
 
     func setup(with buttonData: ButtonData) {
@@ -42,7 +47,6 @@ class ButtonTableViewCell: UITableViewCell {
         eventButton.addGestureRecognizer(longPressGesture)
         
         tapGesture.require(toFail: doubleTapGesture)
-        
     }
     
     @objc func singleTapDetected() {

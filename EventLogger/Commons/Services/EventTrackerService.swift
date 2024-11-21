@@ -6,7 +6,7 @@
 //
 
 protocol EventTrackerServiceProtocol {
-    func createEvent(_ eventData: EventDTO) async throws -> EventDTO
+    @discardableResult func createEvent(_ eventData: EventDTO) async throws -> EventDTO
     func deleteEvent(withId id: String) async throws
     func fetchEvents(page: Int, limit: Int) async throws -> [EventDTO]
     func fetchEvent(by id: String) async throws -> EventDTO?

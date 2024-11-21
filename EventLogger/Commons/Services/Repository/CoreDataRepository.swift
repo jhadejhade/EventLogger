@@ -34,7 +34,7 @@ class CoreDataRepository<DTO: CoreDataMappable, CoreDataObject: NSManagedObject 
         }
         
         do {
-            try await databaseContext.save(in: .background)
+            try await databaseContext.save(in: .main)
         } catch {
             throw error
         }
@@ -46,7 +46,7 @@ class CoreDataRepository<DTO: CoreDataMappable, CoreDataObject: NSManagedObject 
         let _ = object.toCoreDataModel(using: databaseContext)
         
         do {
-            try await databaseContext.save(in: .background)
+            try await databaseContext.save(in: .main)
         } catch {
             throw error
         }
@@ -59,7 +59,12 @@ class CoreDataRepository<DTO: CoreDataMappable, CoreDataObject: NSManagedObject 
         fetchRequest.fetchLimit = limit
         fetchRequest.fetchOffset = (page - 1) * limit
         
-        let result = try await databaseContext.fetch(fetchRequest: fetchRequest, in: .main).map { $0.toDomainModel() as! Model }
+        let sortDescriptor = NSSortDescriptor(key: "createdAt", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        let result = try await databaseContext
+            .fetch(fetchRequest: fetchRequest, in: .main)
+            .map { $0.toDomainModel() as! Model }
         
         return result
     }
@@ -86,7 +91,7 @@ class CoreDataRepository<DTO: CoreDataMappable, CoreDataObject: NSManagedObject 
         }
         
         do {
-            try await databaseContext.save(in: .background)
+            try await databaseContext.save(in: .main)
         } catch {
             throw error
         }

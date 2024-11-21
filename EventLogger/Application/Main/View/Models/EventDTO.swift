@@ -5,16 +5,19 @@
 //  Created by Jade Lapuz on 11/22/24.
 //
 
+import Foundation
+
 struct EventDTO: CoreDataMappable {
     var id: Int
     let title: String
     let type: ButtonEvent
     
     func toCoreDataModel(using context: CoreDataContext) -> Event {
-        let event: Event = context.create(in: .background)
+        let event: Event = context.create(in: .main)
         event.title = title
         event.id = Int64(id)
         event.type = type.rawValue
+        event.createdAt = Date()
         
         return event
     }
