@@ -30,6 +30,9 @@ class MainViewController: UIViewController {
     // MARK: Private methods
     
     private func setupViews() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         tableView.register(ButtonTableViewCell.self)
         
         addBindings()
@@ -41,7 +44,14 @@ class MainViewController: UIViewController {
                 return
             }
             
-            tableView.reloadData()
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {
+                    return
+                }
+                
+                self.tableView.reloadData()
+            }
+            
         }
         .store(in: &cancellables)
     }
@@ -53,9 +63,9 @@ class MainViewController: UIViewController {
     }
 }
 
-// MARK: UITableViewDataSource
+// MARK: UITableViewDataSource, UITableViewDelegate
 
-extension MainViewController: UITableViewDataSource {
+extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ButtonTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         
@@ -67,6 +77,14 @@ extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.buttonDatasource.count
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard indexPath.row == viewModel.buttonDatasource.count - 1 else {
+            return
+        }
+        
+        viewModel.bumpPage()
     }
 }
 

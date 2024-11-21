@@ -11,13 +11,13 @@ protocol DataLoadable {
     func loadData<T: Codable>(currentPage: Int, numberOfItemsPerPage: Int) async throws -> [T]
 }
 
-class DataService: DataLoadable {
+class MockDataService: DataLoadable {
     struct Constants {
         /// 0 seconds delay
         static let delayInNanoseconds = UInt64(0 * 1_000_000_000)
     }
     
-    static let shared = DataService()
+    static let shared = MockDataService()
     
     private init() {
         

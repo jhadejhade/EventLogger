@@ -12,30 +12,63 @@ protocol MainViewControllerViewModelProtocol: ObservableObject {
     var buttonDatasourcePublisher: Published<[ButtonData]>.Publisher { get }
     
     func fetchButtonDatasource()
+    func bumpPage()
 }
 
 class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
+   
+    // MARK: Constants
+    
+    struct Constants {
+        static let numberOfItemsPerPage: Int = 20
+    }
+    
+    // MARK: Public Properties
+    
     @Published var buttonDatasource: [ButtonData] = []
     var buttonDatasourcePublisher: Published<[ButtonData]>.Publisher {
         $buttonDatasource
     }
     
-    private let dataService: DataService
+    // MARK: Private Properties
     
-    private var currentPage = 0
+    private let dataService: MockDataService
+    private let trackerService: EventTrackerServiceProtocol
     
-    init(dataService: DataService = DataService.shared) {
-        self.dataService = dataService
+    private var currentPage = 0 {
+        didSet {
+            fetchButtonDatasource()
+        }
     }
+    
+    // MARK: Lifecycle
+    
+    init(dataService: MockDataService = MockDataService.shared, trackerService: EventTrackerServiceProtocol = EventTrackerService(repository: CoreDataRepository())) {
+        self.dataService = dataService
+        self.trackerService = trackerService
+    }
+    
+    // MARK: Public methods
     
     func fetchButtonDatasource() {
         Task {
             do {
-                buttonDatasource = try await dataService.loadData(currentPage: currentPage, numberOfItemsPerPage: 10)
+                let result: [ButtonData] = try await dataService.loadData(currentPage: currentPage, numberOfItemsPerPage: Constants.numberOfItemsPerPage)
+                
+                if currentPage == 0 {
+                    buttonDatasource = result
+                } else {
+                    buttonDatasource.append(contentsOf: result)
+                }
+                
             } catch {
                 print(error)
             }
         }
+    }
+    
+    func bumpPage() {
+        currentPage += 1
     }
 }
 
