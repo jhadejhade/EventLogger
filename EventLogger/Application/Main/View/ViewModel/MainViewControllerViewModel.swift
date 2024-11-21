@@ -73,13 +73,11 @@ class MainViewControllerViewModel: MainViewControllerViewModelProtocol {
     }
     
     func trackEvent(with buttonData: ButtonData, for event: ButtonEvent) {
-        let event = EventDTO(id: buttonData.id, title: buttonData.title, type: event)
+        let event = EventDTO(id: buttonData.id, title: buttonData.title, type: event, createdAt: nil)
         
         Task {
             do {
                 try await trackerService.createEvent(event)
-                let test = try await trackerService.fetchEvents(page: 1, limit: 500)
-                print(test)
             } catch {
                 print(error)
             }

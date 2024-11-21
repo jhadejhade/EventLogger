@@ -11,6 +11,7 @@ struct EventDTO: CoreDataMappable {
     var id: Int
     let title: String
     let type: ButtonEvent
+    let createdAt: Date?
     
     func toCoreDataModel(using context: CoreDataContext) -> Event {
         let event: Event = context.create(in: .main)

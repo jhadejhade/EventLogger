@@ -8,10 +8,10 @@
 extension Event: DomainMappable {
     func toDomainModel() -> EventDTO {
         guard let title, let type else {
-            return EventDTO(id: 0, title: "", type: .tap)
+            return EventDTO(id: 0, title: "", type: .tap, createdAt: nil)
         }
         
-        let eventDTO = EventDTO(id: Int(id), title: title, type: ButtonEvent(rawValue: type) ?? .tap)
+        let eventDTO = EventDTO(id: Int(id), title: title, type: ButtonEvent(rawValue: type) ?? .tap, createdAt: createdAt)
         
         return eventDTO
     }

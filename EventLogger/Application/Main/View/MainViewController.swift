@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import SwiftUI
 
 class MainViewController: UIViewController {
 
@@ -59,7 +60,11 @@ class MainViewController: UIViewController {
     // MARK: IBActions
     
     @IBAction func viewEventTapped(_ sender: UIButton) {
+        let viewModel = EventLogViewModel()
+        let eventLogView = EventLogView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: eventLogView)
         
+        navigationController?.pushViewController(hostingController, animated: true)
     }
 }
 
